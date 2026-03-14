@@ -86,26 +86,74 @@ const getSatLightRange = (shade, family, use) => {
 const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
-const hslToHex = (h, s, l) => {
-  l /= 100;
-  const a = (s * Math.min(l, 1 - l)) / 100;
-  const f = (n) => {
-    const k = (n + h / 30) % 12;
-    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(255 * color).toString(16).padStart(2, "0");
+function rgbToHex(r, g, b) {
+  const toHex = c => {
+    const hex = c.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
   };
-  return `#${f(0)}${f(8)}${f(4)}`;
-};
+  return "#" + toHex(r) + toHex(g) + toHex(b);
+}
+
+function hslToRgb(h, s, l) {
+  s /= 100;
+  l /= 100;
+
+  const k = n => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = n =>
+    l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+
+  let rgb = [
+    Math.round(255 * f(0)), // R
+    Math.round(255 * f(8)), // G
+    Math.round(255 * f(4))  // B
+  ];
+  return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+}
+
+function hexToHsl(hex) {
+  hex = hex.replace(/^#/, '');
+  if (hex.length === 3) {
+    hex = hex.split('').map(c => c + c).join('');
+  }
+
+  const r = parseInt(hex.substr(0, 2), 16) / 255;
+  const g = parseInt(hex.substr(2, 2), 16) / 255;
+  const b = parseInt(hex.substr(4, 2), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0; // achromatic
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+
+  return [
+    Math.round(h * 360),          // Hue
+    Math.round(s * 100),          // Saturation
+    Math.round(l * 100)           // Lightness
+  ];
+}
 
 const generateColors = (count, hueRange, satRange, lightRange) => {
-  const colors = [];
+  const hslColors = [];
   for (let i = 0; i < count; i++) {
     const h = getRandomInt(hueRange[0], hueRange[1]);
     const s = getRandomInt(satRange[0], satRange[1]);
     const l = getRandomInt(lightRange[0], lightRange[1]);
-    colors.push(hslToHex(h, s, l));
+    hslColors.push(`hsl(${h}, ${s}%, ${l}%)`);
   }
-  return colors;
+  return hslColors;
 };
 
 const renderPalette = (colors) => {
@@ -148,4 +196,26 @@ document.querySelector("#color-box").addEventListener("click", (event) => {
       });
     }
   }
+});
+
+// ====== Change Color Code on Click ======
+document.querySelectorAll("#color-box > div > p").forEach((pElement) => {
+  pElement.addEventListener("click", () => {
+    const color = pElement.innerText;
+    if (color.startsWith("hsl")) {
+      let [h, s, l] = color.match(/\d+/g).map(Number);
+      const rgbColor = hslToRgb(h, s, l);
+      pElement.innerText = rgbColor;
+    }
+    else if (color.startsWith("rgb")) {
+      let [r, g, b] = color.match(/\d+/g).map(Number);
+      const hexColor = rgbToHex(r, g, b);
+      pElement.innerText = hexColor;
+    }
+    else {
+      const [h, s, l] = hexToHsl(color);
+      const hslColor = `hsl(${h}, ${s}%, ${l}%)`;
+      pElement.innerText = hslColor;
+    }
+  });
 });
