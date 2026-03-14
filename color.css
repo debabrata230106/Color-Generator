@@ -1,5 +1,8 @@
 body {
-  min-width: 350px;
+  padding: 0px 10px;
+}
+html {
+  min-width: 330px;
 }
 
 * {
@@ -14,15 +17,19 @@ body {
   letter-spacing: 5px;
   font-weight: lighter;
 }
-
 .container {
-  margin: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  margin: 40px 0px;
 }
 
 /* Form container */
 #form {
   max-width: 800px;
-  margin: 2rem auto;
+  margin: 0px 20px;
   padding: 1rem;
   background: #f9f9fb;
   border-radius: 12px;
@@ -32,10 +39,10 @@ body {
 
 /* Title */
 #form p {
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 23px;
+  font-weight: 500 !important;
   margin-bottom: 1.5rem;
-  color: #333;
+  text-align: left;
 }
 
 /* Section headings */
@@ -84,7 +91,7 @@ body {
 
 #generate-clr {
   max-width: 800px;
-  margin: 2rem auto;
+  margin: 0px 20px;
   padding: 1rem;
   background: #f9f9fb;
   border-radius: 12px;
@@ -113,6 +120,13 @@ button.generate:hover {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+#clr-generate > h3 {
+  font-size: 23px;
+  font-weight: 500 !important;
 }
 
 #color-box {
@@ -142,25 +156,25 @@ button.generate:hover {
 
 #color-box > div > p {
   cursor: pointer;
-  margin-top: 5px;
+  margin-top: 3px;
   font-weight: 500;
 }
 
 #color-box > div > button {
   border: none;
-  color: brown;
-  font-size: 13px;
-  padding: 3px 0;
-  border-radius: 7px;
+  color: orangered;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  text-transform: uppercase;
+  padding: 2px 5px;
+  margin-top: 5px;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-#color-box > div > button:hover {
-  border: 1px solid #e85a5a;
-  transition: 0.5s ease;
-}
-
-@media (max-width: 350) {
+@media (max-width: 330) {
   body {
-    overflow-x: scroll ;
+    overflow-x: scroll;
   }
 }
